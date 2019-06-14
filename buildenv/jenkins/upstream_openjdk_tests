@@ -230,12 +230,11 @@ node() {
                 // trigger tests for each context
                 ctxts.each{ r -> 
                     stage("$r.OS-$r.ARCH") {
-                        println r.toString()
                         parallel "$r.OS-$r.ARCH OpenJDK sanity": {
                             // Run a _sanity.openjdk test job with appropriate parameters
                             build job: TEST_JOB_NAME, parameters: [
                                 string(name: 'ADOPTOPENJDK_REPO', value: params.ADOPTOPENJDK_REPO ? params.ADOPTOPENJDK_REPO : "https://github.com/AdoptOpenJDK/openjdk-tests.git"),
-                                string(name: 'ADOPTOPENJDK_BRANCH', value: parms.ADOPTOPENJDK_BRANCH ? params.ADOPTOPENJDK_BRANCH : "master"),
+                                string(name: 'ADOPTOPENJDK_BRANCH', value: params.ADOPTOPENJDK_BRANCH ? params.ADOPTOPENJDK_BRANCH : "master"),
                                 string(name: 'OPENJ9_REPO', value: params.OPENJ9_REPO ? params.OPENJ9_REPO : ""),
                                 string(name: 'OPENJ9_BRANCH', value: params.OPENJ9_BRANCH ? params.OPENJ9_BRANCH : ""),
                                 string(name: 'JenkinsFile', value: r.getJenkinsFile()),
@@ -252,7 +251,7 @@ node() {
                             // Run a systemtest test job with appropriate parameters
                             build job: TEST_JOB_NAME, parameters: [
                                 string(name: 'ADOPTOPENJDK_REPO', value: params.ADOPTOPENJDK_REPO ? params.ADOPTOPENJDK_REPO : "https://github.com/AdoptOpenJDK/openjdk-tests.git"),
-                                string(name: 'ADOPTOPENJDK_BRANCH', value: parms.ADOPTOPENJDK_BRANCH ? params.ADOPTOPENJDK_BRANCH : "master"),
+                                string(name: 'ADOPTOPENJDK_BRANCH', value: params.ADOPTOPENJDK_BRANCH ? params.ADOPTOPENJDK_BRANCH : "master"),
                                 string(name: 'OPENJ9_REPO', value: params.OPENJ9_REPO ? params.OPENJ9_REPO : ""),
                                 string(name: 'OPENJ9_BRANCH', value: params.OPENJ9_BRANCH ? params.OPENJ9_BRANCH : ""),
                                 string(name: 'JenkinsFile', value: r.getJenkinsFile()),
