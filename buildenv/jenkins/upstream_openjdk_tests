@@ -62,8 +62,7 @@ class LatestReleaseInfo implements Serializable {
 
     public boolean isRetestNeeded() {
         ZonedDateTime previous = getLatestFromWorspace()
-        ZonedDateTime newest = metadata.newest
-        return previous == null || (previous != null && newest.compareTo(previous) > 0)
+        return previous == null || (previous != null && latestCurrent.compareTo(previous) > 0)
     }
 
     public void writeLatestToWorkspace() {
