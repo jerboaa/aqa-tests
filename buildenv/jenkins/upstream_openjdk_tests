@@ -231,9 +231,12 @@ node() {
                 // trigger tests for each context
                 ctxts.each{ r -> 
                     stage("prepare $r.OS-$r.ARCH") {
-                        parallelJobs["openjdk$version-$r.OS-$r.ARCH sanity.openjdk"] = 
+                        def jdk_url = r.JDK_URL
+                        def source_url = r.SOURCE_URL
+                        def jdk_jre_url = "$r.JDK_URL $r.JRE_URL"
+                        parallelJobs["openjdk$version-$r.OS-$r.ARCH sanity.openjdk"] = {
                             // Run a _sanity.openjdk test job with appropriate parameters
-                            build( job: TEST_JOB_NAME, parameters: [
+                            build job: TEST_JOB_NAME, parameters: [
                                 string(name: 'ADOPTOPENJDK_REPO', value: params.ADOPTOPENJDK_REPO ? params.ADOPTOPENJDK_REPO : "https://github.com/AdoptOpenJDK/openjdk-tests.git"),
                                 string(name: 'ADOPTOPENJDK_BRANCH', value: params.ADOPTOPENJDK_BRANCH ? params.ADOPTOPENJDK_BRANCH : "master"),
                                 string(name: 'OPENJ9_REPO', value: params.OPENJ9_REPO ? params.OPENJ9_REPO : ""),
@@ -243,14 +246,15 @@ node() {
                                 string(name: 'BUILD_LIST', value: "openjdk"),
                                 string(name: 'TARGET', value: "sanity"),
                                 string(name: 'SDK_RESOURCE', value: "customized"),
-                                string(name: 'CUSTOMIZED_SDK_URL', value: "$r.JDK_URL $r.JRE_URL"),
-                                string(name: 'CUSTOMIZED_SDK_SOURCE_URL', value: "$r.SOURCE_URL"),
+                                string(name: 'CUSTOMIZED_SDK_URL', value: jdk_jre_url),
+                                string(name: 'CUSTOMIZED_SDK_SOURCE_URL', value: source_url),
                                 booleanParam(name: 'IS_PARALLEL', value: false),
                                 booleanParam(name: 'AUTO_DETECT', value: true),
-                            ], propagate: true)
-                        parallelJobs["openjdk$version-$r.OS-$r.ARCH sanity.system"] = 
+                            ], propagate: true
+                        }
+                        parallelJobs["openjdk$version-$r.OS-$r.ARCH sanity.system"] = {
                             // Run a systemtest test job with appropriate parameters
-                            build( job: TEST_JOB_NAME, parameters: [
+                            build job: TEST_JOB_NAME, parameters: [
                                 string(name: 'ADOPTOPENJDK_REPO', value: params.ADOPTOPENJDK_REPO ? params.ADOPTOPENJDK_REPO : "https://github.com/AdoptOpenJDK/openjdk-tests.git"),
                                 string(name: 'ADOPTOPENJDK_BRANCH', value: params.ADOPTOPENJDK_BRANCH ? params.ADOPTOPENJDK_BRANCH : "master"),
                                 string(name: 'OPENJ9_REPO', value: params.OPENJ9_REPO ? params.OPENJ9_REPO : ""),
@@ -260,10 +264,11 @@ node() {
                                 string(name: 'BUILD_LIST', value: "systemtest"),
                                 string(name: 'TARGET', value: "sanity"),
                                 string(name: 'SDK_RESOURCE', value: "customized"),
-                                string(name: 'CUSTOMIZED_SDK_URL', value: "$r.JDK_URL"),
+                                string(name: 'CUSTOMIZED_SDK_URL', value: jdk_url),
                                 booleanParam(name: 'IS_PARALLEL', value: false),
                                 booleanParam(name: 'AUTO_DETECT', value: true),
-                            ], propagate: true)
+                            ], propagate: true
+                        }
                     }
                 }
             } else {
